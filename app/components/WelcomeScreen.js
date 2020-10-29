@@ -1,7 +1,7 @@
 import React from 'react';
 import { ImageBackground, StyleSheet, View, Image, Text, TouchableOpacity } from 'react-native';
 
-const image = { uri: "https://assets.entrepreneur.com/content/3x2/2000/20190102161219-GettyImages-904000456.jpeg" };
+
 
 const AppButton = ({ onPress, title }) => (
     <TouchableOpacity onPress={onPress} style={styles.appButtonContainer}>
@@ -19,10 +19,10 @@ const WelcomeScreen = ({ navigation }) => {
 
             <ImageBackground 
                 style={styles.backgroundImage} 
-                source={require("../assets/loadScreenPicture.jpg")}
+                source={require("../assets/loadingScreenPic.jpg")}
                 imageStyle={{ resizeMode: 'cover' }}
             >
-                <View style={styles.centerContentImage}>
+                {/* <View style={styles.centerContentImage}>
 
                     <Image 
                         style={styles.logo} source={require("../assets/transparentLogo2.png")}
@@ -36,7 +36,7 @@ const WelcomeScreen = ({ navigation }) => {
                 </View>
                 <View style={styles.centerContentText}>
                     <Text style={styles.click}>Click anywhere to continue...</Text>
-                </View>
+                </View> */}
                 
                
 

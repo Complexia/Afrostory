@@ -7,14 +7,14 @@ import { Image, ScrollView, FlatList, Button, StyleSheet, View, Text, ActivityIn
 
 let isFetching = true;
 let isDone = false;
-
+let globalXOffset = 0;
 function setFetching(value) {
     isFetching = value;
 }
 
 const fetchContent = (id, status, title, author, year, contentArr, pageNumber, authorOrigin, genre) => {
     
-    console.log("From desc", id, status, title, author, year, contentArr, pageNumber, authorOrigin, genre)
+    
     if(contentArr.length == 0) {
         isDone = false;
     }
@@ -130,6 +130,7 @@ const constructPages = (data, wordsNumber) => {
 let wordNumber = 10;
 
 const paginateData = (data, pageNumber, id, author, year, title, authorOrigin, genre) => {
+    console.log("data from book", data);
     let words = data[0].match(/(.*?\s){250}/g);
     //let words = data[0].split(" ", data[0].length);
     
@@ -140,18 +141,24 @@ const paginateData = (data, pageNumber, id, author, year, title, authorOrigin, g
     let pages = [];
     let intro = [author, authorOrigin, year, genre, title];
     pages.push (
-        {
+        {   
+            //key: "x",
             pageNumber: "x",
             pageContent: intro
         }
     )
      for(let i = 0; i < words.length; i++) {
+        let id = i.toString();
+        let idString = i.toString();
+        //console.log("ID: ", id)
         pages.push (
-            {
-               pageNumber: i + 1,
-               pageContent: words[i] 
+            {  
+                //key: id,
+                pageNumber: i + 1,
+                pageContent: words[i] 
             }
-        )
+        ) 
+
      }
      let pageWords = constructPages(data, wordNumber);
      return (
@@ -213,48 +220,79 @@ const renderFlatList = (data, pageNumber, id) => {
     let getItemLayout;
     function onScrollEnd(e) {
         let contentOffset = e.nativeEvent.contentOffset;
+        
         let viewSize = e.nativeEvent.layoutMeasurement;
         layoutWidth = viewSize.width;
         layoutOffset = contentOffset.x;
+        
+        getItemLayout = (data, index) => {
+        
+            const length = layoutWidth;
+            const offset = layoutOffset;
+            
+            
+            return {length, offset, index}
+        }
+        
         // Divide the horizontal offset by the width of the view to see which page is visible
         let pageNum = Math.floor(contentOffset.x / viewSize.width);
         
         savePageNumber(id, pageNum);
+        
     }
+    
+    let initialRender = pageNumber + 1;
+    
     
     return (
         
-        <View style={styles.flatlistView} onLayout={(e) => {
+        <View
+            onLayout={(e) => {
             
-            //let contentOffset = e.nativeEvent.contentOffset;
+            let contentOffset = e.nativeEvent.contentOffset;
             let viewSize = e.nativeEvent.layout;
             layoutWidth = viewSize.width;
             layoutOffset = viewSize.x;
-            
-            getItemLayout = (data, index) => {
+            //globalXOffset = layoutOffset;
+            // getItemLayout = (data, index) => {
         
-                const length = layoutWidth;
-                const offset = layoutOffset;
+            //     const length = layoutWidth;
+            //     const offset = layoutOffset;
                 
                 
-                return {length, offset, index}
-            }
+            //     return {length, offset, index}
+            // }
             
 
-          }} >
+            }} >
             <FlatList
     
                 ref = {flatlist}
                 data = {data}
-                getItemLayout = {getItemLayout}
-                //getItemLayout={(data, index) => { return { length: data.length, index, offset: (Dimensions.get('screen').width - 7.5) * index } }}
-                keyExtractor={({ id }) => id}
+                //getItemLayout = {getItemLayout}
+                
+                onLayout={e => {
+                    globalXOffset = e.nativeEvent.layout.width;
+                    //console.log(globalXOffset, "XXXXX");
+                    //console.log("hehehe", e.nativeEvent.layout);
+                   //getItemLayout=(data, index) => { return { length: e.nativeEvent.layout.width, index, offset: e.nativeEvent.layout.width * index } };
+                }}
+                getItemLayout={(data, index) => { 
+                    //console.log(globalXOffset, "SSSS");
+                    return { 
+                        length: globalXOffset, index, offset: globalXOffset * index 
+                    } 
+                }}
+                //keyExtractor={({ id }) => id}
+                //keyExtractor={(index) => index}
+                keyExtractor={(item, index) => index.toString()}
                 horizontal = {true}
                 pagingEnabled = {true}
                 showsHorizontalScrollIndicator = {false}
-                initialNumToRender = {pageNumber + 1}
+                initialNumToRender = {initialRender}
                 onMomentumScrollEnd={onScrollEnd}
                 initialScrollIndex = {pageNumber}
+                
                 
                 renderItem={({ item }) => {
                     
@@ -274,7 +312,7 @@ const renderFlatList = (data, pageNumber, id) => {
 }
 
 const savePageNumber = async(id, pageNumber) => {
-
+    
     AsyncStorage.setItem(id + "pageNumber", JSON.stringify(pageNumber));
 
 

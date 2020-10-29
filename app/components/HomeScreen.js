@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { RefreshControl, SafeAreaView, View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, FlatList, AsyncStorage, Platform } from 'react-native';
+import { Image, RefreshControl, SafeAreaView, View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, FlatList, AsyncStorage, Platform } from 'react-native';
 
 
 
@@ -132,6 +132,17 @@ const Item = ({ item, status, style, navigation, downloaded, bookCount}) => {
     if(item.editorsPick) {
         recommended = "Recommended";
     }
+
+    let imageSource = "";
+    if (item.genre == "Afro Classics") {
+        imageSource= require("../assets/afroClassicsPic.png");
+    }
+    else if(item.genre == "Other Classics") {
+        imageSource= require("../assets/otherClassicsPic.png");
+    }
+    else {
+        imageSource= require("../assets/kidsPic.png");
+    }
     
     const onPressClear = () => AsyncStorage.multiRemove(clearKeys);
     return (
@@ -151,7 +162,8 @@ const Item = ({ item, status, style, navigation, downloaded, bookCount}) => {
                             id: item.id
                         }                       
                     })} />
-                    <AppButton title="Clear Async" onPress={onPressClear} />
+                    {/* <AppButton title="Clear Async" onPress={onPressClear} /> */}
+                    <AppButton title="Refresh" onPress={() => navigation.navigate("HomeStack")} />
 
                 </View>
             )
@@ -178,8 +190,11 @@ const Item = ({ item, status, style, navigation, downloaded, bookCount}) => {
                     style={[styles.item, style]}>
 
                         <Text style={styles.title}>{item.title}</Text>
-                        <Text style={styles.titleProps}>{item.author}</Text>
-                        <Text style={styles.genreProps}>{item.genre}</Text>
+                        <Text style={styles.authorProps}>by {item.author}</Text>
+
+                        <Image source={imageSource} resizeMode="contain" style={styles.categoryTags}/>
+                        {/* <Text style={styles.genreProps}>{item.genre}</Text> */}
+
                         <Text style={styles.recommendedProp}>{recommended}</Text>
                         <Text style={styles.downloadedProp}>{downloaded}</Text>
                     </TouchableOpacity> 
@@ -207,8 +222,9 @@ const Item = ({ item, status, style, navigation, downloaded, bookCount}) => {
                     style={[styles.item, style]}>
 
                         <Text style={styles.title}>{item.title}</Text>
-                        <Text style={styles.titleProps}>{item.author} </Text>
-                        <Text style={styles.titleProps}>{item.genre} </Text>
+                        <Text style={styles.authorProps}>by {item.author} </Text>
+                        <Image source={imageSource} resizeMode="contain" style={styles.categoryTags}/>
+                        {/* <Text style={styles.titleProps}>{item.genre} </Text> */}
                         <Text style={styles.recommendedProp}>{recommended}</Text>
                         <Text style={styles.downloadedProp}>{downloaded}</Text>
                     </TouchableOpacity> 
@@ -234,13 +250,36 @@ const getData = async(whereFrom) => {
             const keys = await AsyncStorage.getAllKeys();
             clearKeys = keys;
             //every 13th value in the DB is id
-            for(let i=0;i < keys.length-4;i++) {
-               if (i % 13 == 0) {
-                   newKeys.push(keys[i]);
-               }
+            // for(let i=0;i < keys.length-4;i++) {
+            //    console.log("key found", keys[i]) 
+            //    if (i % 13 == 0) {
+            //        newKeys.push(keys[i]);
+            //        console.log("Key pushed", keys[i]) 
+            //    }
+            // }
+
+            for(let i=0;i<keys.length;i++) {
+                if( !keys[i].includes("authorName") &&
+                    !keys[i].includes("authorOrigin") &&
+                    !keys[i].includes("averageRating") &&
+                    !keys[i].includes("category") && 
+                    !keys[i].includes("content") &&
+                    !keys[i].includes("description") &&
+                    !keys[i].includes("downloadCount") &&
+                    !keys[i].includes("editorsPick") &&
+                    !keys[i].includes("pageNumber") &&
+                    !keys[i].includes("ratingCount") &&
+                    !keys[i].includes("title") &&
+                    !keys[i].includes("year")) 
+                    
+                {
+                    newKeys.push(keys[i]);
+                    //console.log("Key pushed", keys[i]) 
+                }
             }
             
-            
+            //console.log("new keys", newKeys, newKeys.length);
+            //console.log("keys", keys, newKeys.length);
             for(let i=0;i<newKeys.length;i++) {
                 let id = newKeys[i];
                 let titleAsync = await AsyncStorage.getItem(id + "title");
@@ -307,20 +346,22 @@ const getData = async(whereFrom) => {
                         }
                     })         
                     .catch(function(error) {
-                        console.log("You are offline");
+                        console.log("You are offline1");
+                        console.log(error);
                         
                     })
-                    .finally(() => setFetching(false));
+                    //.finally(() => setFetching(false));
                 }
                 catch(error) {
-                    console.log("You are offline");
+                    console.log("You are offline2");
+                    console.log(error);
         
                 }
                 
                 
             }
             else {
-                console.log("You are offline");
+                console.log("You are offline3");
                 setFetching(false);
             }
 
@@ -473,6 +514,10 @@ const styles = StyleSheet.create({
     titleProps: {
         color: "#C0C0C0"
     },
+    authorProps: {
+        color: "#C0C0C0",
+        fontSize: 20
+    },
     downloadedProp: {
         color: "#C0C0C0",
         alignSelf: "flex-end"
@@ -483,7 +528,10 @@ const styles = StyleSheet.create({
     },
     recommendedProp: {
         color: "#f3f70c",
-        alignSelf: "flex-end"
+        alignSelf: "flex-end",
+        fontWeight: "bold",
+        textTransform: "uppercase"
+
     },
     libraryTag: {
         padding: 20
@@ -510,6 +558,11 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         textTransform: "uppercase"
     },
+    categoryTags: {
+        height: 50,
+        width: 200,
+        borderRadius: 10
+    }
 
 
 })

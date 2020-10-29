@@ -46,6 +46,6 @@
     "babel-preset-expo": "~8.1.0"
   },
   "private": true,
-  "name": "Afrobook",
-  "version": "1.0.0"
+  "name": "Afrostory",
+  "version": "1.0.2"
 }

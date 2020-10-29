@@ -12,14 +12,14 @@ const TempHomeScreen = ({ navigation }) => {
     
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView style={styles.scrollView}>
+            
                 
-                <Image 
-                style={styles.logo} source={require("../assets/transparentLogo.png")}
-                resizeMode="contain" />
-                <Text style={styles.sloganText}>Write your own story</Text>
+            <Image 
+            style={styles.logo} source={require("../assets/homeScreenLogo.jpg")}
+            resizeMode="contain" />
+            {/* <Text style={styles.sloganText}>Write your own story</Text> */}
                 
-            </ScrollView>
+            
 
             <AppButton title="Library" onPress={() => navigation.navigate("Home")} />
         </SafeAreaView>
@@ -35,6 +35,10 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         alignSelf: "center"
         
+    },
+
+    scrollView: {
+        alignItems: "center"
     },
     sloganText: {
         fontWeight: "bold",
@@ -64,7 +68,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "black"
+        backgroundColor: "black",
+        alignItems: "center",
+        justifyContent: "center",
+        
+        
         
     },
 
@@ -74,7 +82,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingVertical: 10,
         paddingHorizontal: 12,
-        marginTop: 10
+        marginTop: 10,
+        alignSelf: 'stretch',
    
     },
     appButtonText: {
@@ -86,7 +95,8 @@ const styles = StyleSheet.create({
     },
     logo: {
         width: Dimensions.get('screen').width - 30,
-        height: 50
+        height: 280,
+        width: 280 * 0.771875
     }
     
 })

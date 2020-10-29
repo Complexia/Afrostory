@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Image, View, Header } from 'react-native';
 import WelcomeScreen from './app/components/WelcomeScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './app/components/HomeScreen';
@@ -23,10 +23,23 @@ import TempHomeScreen from './app/components/TempHomeScreen';
 const Tabs = createMaterialBottomTabNavigator();
 const HomeStack = createStackNavigator();
 
+const ImageHeader = () => {
+    return (
+        <View style={{ backgroundColor: '#eee' }}>
+            <Image
+                style={styles.absoluteFill}
+                source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg' }}
+            />
+            
+            
+        </View>
+    )
+};
+
 
 const HomeStackScreen = () => {
     return (
-        <HomeStack.Navigator headerMode = "screen" screenOptions = {{ headerTintColor: '#f0edf6', headerTitleAlign: "center", headerStyle:{backgroundColor: '#22236a'}}}>
+        <HomeStack.Navigator headerMode = "screen" screenOptions = {{ headerTitleStyle: { color: '#fff' }, headerTitleAlign: "center",  header: () => <ImageHeader  />}}>
             <HomeStack.Screen name="Home" component={HomeScreen} options={{title: "AfroStory", headerLeft: null,}} />
             <HomeStack.Screen name="Description" component={DescriptionStackScreen} options={{title: "Description"}} />
             <HomeStack.Screen name="Download" component={DownloadStackScreen} options={{title: "Downloading"}} />
@@ -70,7 +83,7 @@ const DownloadStackScreen = () => {
     return (
         <HomeStack.Navigator headerMode = "screen" screenOptions = {{headerTintColor: '#f0edf6', headerTitleAlign: "center", headerStyle:{backgroundColor: '#22236a'}}} >
             <HomeStack.Screen name="Download" component={DownloadScreen} options={{title: "Downloading"}} />
-            <HomeStack.Screen name="Home" component={HomeScreen} options={{title: "AfroStory"}} />
+            <HomeStack.Screen name="Home" component={HomeStackScreen} options={{title: "AfroStory"}} />
             
         </HomeStack.Navigator>
     )
@@ -87,15 +100,17 @@ const HomeTabScreen = () => {
             
                 activeColor="#f0edf6"
                 inactiveColor="#C0C0C0"
-                barStyle={{ backgroundColor: '#22236a', paddingBottom: 2 }}
+                barStyle={{ backgroundColor: '#373153', paddingBottom: 2 }}
                 
-            >
+            >   
+
                 <Tabs.Screen name="Home" component={TempHomeStackScreen} options = {{
                     tabBarLabel: 'Home',
                     
                     tabBarIcon: ({ color }) => (
                         <MaterialCommunityIcons name="home" color={color} size={26} />
                     ),
+                    
                 }} />
                 <Tabs.Screen name="About" component={AboutStackScreen} options = {{
                     tabBarLabel: 'About',
@@ -111,12 +126,17 @@ const HomeTabScreen = () => {
 }
 
 const LoadStackScreen = () => {
+    
     return (
         <NavigationContainer>
             
-            <HomeStack.Navigator headerMode = "screen" screenOptions = {{headerLeft: null, headerTintColor: '#f0edf6', headerTitleAlign: "center", headerStyle:{backgroundColor: '#22236a'}}}>
+            <HomeStack.Navigator headerMode = "screen" screenOptions = {{headerLeft: null, headerTintColor: '#f0edf6', headerTitleAlign: "center", headerStyle:{backgroundColor: '#373153'}, 
+                // headerBackground: () => (
+                // <Image resizeMode="contain" source={require("./app/assets/headerImage.png")}  />
+                // ),
+            }}>
                 <HomeStack.Screen name="Welcome" component={WelcomeScreen} options={{title: "AfroStory"}}/>
-                <HomeStack.Screen name="Home" component ={HomeTabScreen} options={{title: "AfroStory" }} />
+                <HomeStack.Screen name="Home" component ={HomeTabScreen} options={{title: "AfroStory" } } />
             </HomeStack.Navigator>
         </NavigationContainer>
     )
@@ -143,6 +163,9 @@ const styles = StyleSheet.create({
         
         justifyContent: "center",
 
+    },
+    absoluteFill: {
+        position: "absolute"
     }
 })
 
